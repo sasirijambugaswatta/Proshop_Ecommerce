@@ -6,16 +6,21 @@
   "main": "main.ts",
   "scripts": {
     "compile": "tsc --watch",
-    "start": "nodemon --enable-source-maps dist/main.js"
+    "start": "nodemon --enable-source-maps dist/src/main.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "concurrently": "^8.2.2",
+    "dotenv": "^16.4.5",
     "typescript": "5.5.0-dev.20240514"
   },
   "dependencies": {
     "@types/express": "^4.17.21",
-    "express": "^4.19.2"
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "mongoose": "^8.3.4"
   }
 }
