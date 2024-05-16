@@ -8,7 +8,7 @@ import axios from "axios";
 
 export const ProductScreen = () => {
 
-    const [product, setProduct] = useState<ProductType>([]);
+    const [product, setProduct] = useState<ProductType>();
 
     const {id: productId} = useParams();
 
@@ -30,7 +30,7 @@ export const ProductScreen = () => {
 
             <Row>
                 <Col md={5}>
-                    <Image src={product!.image} alt={product!.name} fluid={true}/>
+                    <Image src={product.image} alt={product!.name} fluid={true}/>
                 </Col>
 
                 <Col md={4}>
