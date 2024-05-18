@@ -4,6 +4,7 @@ import {Rating} from "../Components/Rating.tsx";
 import {useEffect, useState} from "react";
 import {ProductType} from "./HomeScreen.tsx";
 import axios from "axios";
+import {Loader} from "../Components/Loader.tsx";
 
 
 export const ProductScreen = () => {
@@ -18,76 +19,80 @@ export const ProductScreen = () => {
             setProduct(data);
         };
         fetchProducts();
-    }, [productId]);
-
-
-
+        console.log(product);
+    }, [product, productId]);
 
 
     return (
         <>
-            <Link className={'btn btn-light my-3'} to={'/'}>Go Back</Link>
+            {product ?
+                <>
+                    <Link className={'btn btn-light my-3'} to={'/'}>Go Back</Link>
 
-            <Row>
-                <Col md={5}>
-                    <Image src={product.image} alt={product!.name} fluid={true}/>
-                </Col>
+                    <Row>
 
-                <Col md={4}>
-                    <ListGroup variant={"flush"}>
-                        <ListGroupItem>
-                            <h3>{product!.name}</h3>
-                        </ListGroupItem>
+                        <Col md={5}>
+                            <Image src={product!.image} alt={product!.name} fluid={true}/>
+                        </Col>
 
-                        <ListGroupItem>
-                            <Rating value={product!.rating} text={`${product!.numReviews} reviews`} />
-                        </ListGroupItem>
+                        <Col md={4}>
+                            <ListGroup variant={"flush"}>
+                                <ListGroupItem>
+                                    <h3>{product!.name}</h3>
+                                </ListGroupItem>
 
-                        <ListGroupItem>
-                            Price : ${product!.price}
-                        </ListGroupItem>
-                        <ListGroupItem>
-                            {product!.description}
-                        </ListGroupItem>
-                    </ListGroup>
+                                <ListGroupItem>
+                                    <Rating value={product!.rating} text={`${product!.numReviews} reviews`} />
+                                </ListGroupItem>
 
-                </Col>
+                                <ListGroupItem>
+                                    Price : ${product!.price}
+                                </ListGroupItem>
+                                <ListGroupItem>
+                                    {product!.description}
+                                </ListGroupItem>
+                            </ListGroup>
 
-                <Col md={3}>
-                    <Card>
-                        <ListGroup variant={"flush"}>
-                            <ListGroupItem>
-                                <Row>
-                                    <Col>
-                                        Price:
-                                    </Col>
+                        </Col>
 
-                                    <Col>
-                                        <strong>${product!.price}</strong>
-                                    </Col>
-                                </Row>
-                            </ListGroupItem>
-                            <ListGroupItem>
-                                <Row>
-                                    <Col>
-                                        Status:
-                                    </Col>
+                        <Col md={3}>
+                            <Card>
+                                <ListGroup variant={"flush"}>
+                                    <ListGroupItem>
+                                        <Row>
+                                            <Col>
+                                                Price:
+                                            </Col>
 
-                                    <Col>
-                                        <strong>{product!.countInStock > 0 ? 'In Stock': 'Out of Stock'}</strong>
-                                    </Col>
-                                </Row>
-                            </ListGroupItem>
-                            <ListGroupItem>
-                                <Button className={"btn btn-block"} type={'button'} disabled={product!.countInStock === 0}>
-                                    Add to Cart
-                                </Button>
-                            </ListGroupItem>
-                        </ListGroup>
-                    </Card>
-                </Col>
+                                            <Col>
+                                                <strong>${product!.price}</strong>
+                                            </Col>
+                                        </Row>
+                                    </ListGroupItem>
+                                    <ListGroupItem>
+                                        <Row>
+                                            <Col>
+                                                Status:
+                                            </Col>
 
-            </Row>
+                                            <Col>
+                                                <strong>{product!.countInStock > 0 ? 'In Stock': 'Out of Stock'}</strong>
+                                            </Col>
+                                        </Row>
+                                    </ListGroupItem>
+                                    <ListGroupItem>
+                                        <Button className={"btn btn-block"} type={'button'} disabled={product!.countInStock === 0}>
+                                            Add to Cart
+                                        </Button>
+                                    </ListGroupItem>
+                                </ListGroup>
+                            </Card>
+                        </Col>
+
+                    </Row>
+                </>
+                : <Loader/>}
+
         </>
 
     );

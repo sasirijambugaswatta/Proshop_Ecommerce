@@ -4,7 +4,7 @@ import {useEffect, useState} from "react";
 import axios from "axios";
 
 export type ProductType = {
-    _id: string;
+    id: string;
     name: string;
     image: string;
     description: string;
@@ -34,7 +34,7 @@ export const HomeScreen = () => {
             <h1>Latest Product</h1>
             <Row>
                 {products.length > 0 && products.map((product) => (
-                    <Col key={product._id} sm={12} md={6} lg={4} xl={3}>
+                    <Col key={product.id} sm={12} md={6} lg={4} xl={3}>
                         <Product product={product}/>
                     </Col>
                 ))}
