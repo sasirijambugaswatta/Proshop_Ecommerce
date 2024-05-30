@@ -1,31 +1,35 @@
 import {Link, useParams} from "react-router-dom";
 import {Button, Card, Col, Image, ListGroup, ListGroupItem, Row} from "react-bootstrap";
 import {Rating} from "../Components/Rating.tsx";
-import {useEffect, useState} from "react";
-import {ProductType} from "./HomeScreen.tsx";
-import axios from "axios";
-import {Loader} from "../Components/Loader.tsx";
+// import {useEffect, useState} from "react";
+// import {ProductType} from "./HomeScreen.tsx";
+// import axios from "axios";
+import {LoaderScreen} from "./LoaderScreen.tsx";
+import {useGetSingleProductQuery} from "../slices/getSingleProductDetailsApiSlice.ts";
+
 
 
 export const ProductScreen = () => {
 
-    const [product, setProduct] = useState<ProductType>();
+    // const [product, setProduct] = useState<ProductType>();
 
     const {id: productId} = useParams();
 
-    useEffect(() => {
+/*    useEffect(() => {
         const fetchProducts = async () => {
             const {data} = await axios.get(`http://localhost:5000/api/products/${productId}`);
             setProduct(data);
         };
         fetchProducts();
         console.log(product);
-    }, [product, productId]);
+    }, [product, productId]);*/
+
+     const{data:product,isLoading,isError} = useGetSingleProductQuery(productId);
 
 
     return (
         <>
-            {product ?
+            {product && !isLoading && !isError ?
                 <>
                     <Link className={'btn btn-light my-3'} to={'/'}>Go Back</Link>
 
@@ -91,7 +95,7 @@ export const ProductScreen = () => {
 
                     </Row>
                 </>
-                : <Loader/>}
+                : <LoaderScreen/>}
 
         </>
 

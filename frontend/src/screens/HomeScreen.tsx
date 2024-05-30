@@ -1,7 +1,12 @@
 import {Col, Row} from "react-bootstrap";
 import {Product} from "../Components/Product.tsx";
-import {useEffect, useState} from "react";
-import axios from "axios";
+import {useGetProductsQuery} from "../slices/productApiSlice.ts";
+import {LoaderScreen} from "./LoaderScreen.tsx";
+import {Message} from "../Components/Message.tsx";
+
+
+// import {useEffect, useState} from "react";
+// import axios from "axios";
 
 export type ProductType = {
     id: string;
@@ -17,7 +22,7 @@ export type ProductType = {
 }
 
 export const HomeScreen = () => {
-    const [products, setProducts] = useState<ProductType[]>( []);
+    /*const [products, setProducts] = useState<ProductType[]>( []);
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -26,19 +31,25 @@ export const HomeScreen = () => {
             setProducts(data);
         };
         fetchProducts();
-    }, []);
+    }, []);*/
+
+    // @ts-ignore
+    const {data: products,isLoading,isError:error} = useGetProductsQuery();
 
 
     return (
+
         <>
-            <h1>Latest Product</h1>
-            <Row>
-                {products.length > 0 && products.map((product) => (
-                    <Col key={product.id} sm={12} md={6} lg={4} xl={3}>
-                        <Product product={product}/>
-                    </Col>
-                ))}
-            </Row>
+            {isLoading ? (<LoaderScreen/>) : error ? (<Message variant={'danger'}>{error?.data?.message || error?.error}</Message>) : (<>
+                <h1>Latest Product</h1>
+                <Row>
+                    {products.length > 0 && products.map((product:any) => (
+                        <Col key={product.id} sm={12} md={6} lg={4} xl={3}>
+                            <Product product={product}/>
+                        </Col>
+                    ))}
+                </Row>
+            </>)}
         </>
     );
-};
+};/**/
