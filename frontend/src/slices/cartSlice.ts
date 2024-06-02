@@ -1,58 +1,44 @@
 /* eslint-disable */
 import {createSlice} from "@reduxjs/toolkit";
+import {updateCart} from "../utils/cartUtils.ts";
 
 
 
-const initialState = localStorage.getItem("cart") ? JSON.parse(localStorage.getItem("cart")) : {cartItem : []};
+
+const initialState = localStorage.getItem("cart") ? JSON.parse(localStorage.getItem("cart")!) : {cartItems: []};
 
 const cartSlice = createSlice({
     name: 'cart',
-    initialState: {
-        cartItems: [],
-    },
+    initialState,
     reducers: {
         addToCart : (state,action)=>{
             const item = action.payload;
 
-            // @ts-ignore
-            const existItem = state.cartItems.find((x)=>x?._id === item.id);
+            const existItem = state.cartItems.find((x)=>x._id === item._id);
 
             if(existItem){
 
                 // @ts-ignore
                 state.cartItems = state.cartItems.map((x) => x?._id === existItem?._id ? item : x);
             }else {
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-expect-error
+
                 state.cartItems = [...state.cartItems, item]
             }
+            return updateCart(state);
 
-            //Calculate item price
-
-            // @ts-ignore
-            state.itemsPrice = addDecimal(state.cartItems.reduce((acc, item) => acc + item.price * item.qty, 0));
-            //Calculate shipping price
-            // @ts-ignore
-            state.shippngPrice = addDecimal(state.itemPrice > 100 ? 0: 10);
-            //Calculate tax price
-            // @ts-ignore
-            state.taxPrice = addDecimal(Number((0.15 * state.itemsPrice).toFixed(2)));
-            //Calculate total price
-            // @ts-ignore
-            state.totalPrice = (Number(state.itemsPrice) + Number(state.shippngPrice) + Number(state.taxPrice)).toFixed(2);
-
-            localStorage.setItem("cart", JSON.stringify(state));
         },
-        removeFromCart : ()=>{
+        removeFromCart : (state, action)=>{
+            const removingItemId = action.payload;
+
+            state.cartItems = state.cartItems.filter((x) => x?._id !== removingItemId);
+            return updateCart(state);
         }
     }
 
 });
 
-const addDecimal = (num:number) => {
-    return (Math.round(num * 100) / 100).toFixed(2)
-}
 
-export const {addToCart} = cartSlice.actions;
+
+export const {addToCart, removeFromCart} = cartSlice.actions;
 
 export default cartSlice.reducer;
