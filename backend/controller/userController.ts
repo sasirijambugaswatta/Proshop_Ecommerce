@@ -75,6 +75,7 @@ const logoutUser = asyncHandler(async (req:Request, res:Response) => {
 //route GET/api/users/profile
 //access private
 const getUserProfile = asyncHandler(async (req:Request, res:Response) => {
+    // @ts-ignore
     const user = await User.findById(req.user?._id);
     if(user){
         res.status(200).json({
@@ -93,6 +94,7 @@ const getUserProfile = asyncHandler(async (req:Request, res:Response) => {
 //route PUT/api/users/profile
 //access private
 const updateUserProfile = asyncHandler(async (req:Request, res:Response) => {
+    // @ts-ignore
     const user = await User.findById(req.user?._id);
     if(user){
         user.name = req.body.name || user.name;

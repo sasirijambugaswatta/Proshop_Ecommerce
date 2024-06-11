@@ -33,17 +33,16 @@ export const HomeScreen = () => {
         fetchProducts();
     }, []);*/
 
-    // @ts-ignore
+
     const {data: products,isLoading,isError:error} = useGetProductsQuery();
 
 
     return (
-
         <>
             {isLoading ? (<LoaderScreen/>) : error ? (<Message variant={'danger'}>{error?.data?.message || error?.error}</Message>) : (<>
                 <h1>Latest Product</h1>
                 <Row>
-                    {products.length > 0 && products.map((product:any) => (
+                    {products.length > 0 && products.map((product,id) => (
                         <Col key={product.id} sm={12} md={6} lg={4} xl={3}>
                             <Product product={product}/>
                         </Col>
