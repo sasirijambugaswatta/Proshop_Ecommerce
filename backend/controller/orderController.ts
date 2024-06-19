@@ -6,6 +6,7 @@ import Order from "../models/order.model.js";
 //@route GET /api/orders/myorders
 //@access private
 const getMyOrders = asyncHandler(async (req:Request, res:Response) => {
+    // @ts-ignore
     const order = await Order.find({user: req.user?._id});
     if (order){
         res.status(200).json(order);
@@ -33,11 +34,13 @@ const addOrderItems = asyncHandler(async (req:Request, res:Response) => {
         throw new Error('No order items');
     }else {
         const order = new Order({
+            // @ts-ignore
             orderItems : orderItems.map((x) => ({
                 ...x,
                 product: x._id,
                 _id: undefined
             })),
+            // @ts-ignore
             user: req.user?._id,
             shippingAddress,
             paymentMethod,
