@@ -75,7 +75,7 @@ var importData = function () { return __awaiter(void 0, void 0, void 0, function
             case 5:
                 createdUsers = _a.sent();
                 adminUser_1 = createdUsers[0]._id;
-                console.log("admin USer", adminUser_1);
+                console.log("admin User", adminUser_1);
                 sampleProducts = products.map(function (product) {
                     return __assign(__assign({}, product), { user: adminUser_1 });
                 });

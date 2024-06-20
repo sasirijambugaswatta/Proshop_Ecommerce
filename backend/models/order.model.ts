@@ -1,7 +1,7 @@
 import * as mongoose from "mongoose";
 
 // Define types for nested objects
-interface IOrderItem {
+interface IOrderItems {
     name: string;
     qty: number;
     image: string;
@@ -26,7 +26,7 @@ interface IPaymentResult {
 // Define the main order schema
 interface IOrder extends Document {
     user: mongoose.Schema.Types.ObjectId;
-    orderItem: IOrderItem[];
+    orderItems: IOrderItems[];
     shippingAddress: IShippingAddress;
     paymentMethod: string;
     paymentResult: IPaymentResult;
@@ -40,13 +40,13 @@ interface IOrder extends Document {
     deliveredAt?: Date;
 }
 
-const orderSchema = new mongoose.Schema({
+const orderSchema = new mongoose.Schema<IOrder>({
     user:{
         type: mongoose.Schema.Types.ObjectId,
         required: true,
         ref: "User"
     },
-    orderItem:[
+    orderItems:[
         {
             name: {
                 type: String,

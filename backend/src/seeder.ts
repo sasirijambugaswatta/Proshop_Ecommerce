@@ -24,7 +24,7 @@ const importData = async ()=>{
 
         const adminUser = createdUsers[0]._id;
 
-        console.log("admin USer",adminUser);
+        console.log("admin User",adminUser);
 
         const sampleProducts = products.map((product) => {
             return {...product,user: adminUser}

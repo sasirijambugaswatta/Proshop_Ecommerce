@@ -6,7 +6,6 @@ import {Button, Card, Col, Image, ListGroup, ListGroupItem, Row} from "react-boo
 import {Message} from "../Components/Message.tsx";
 import {useCreateOrderMutation} from "../slices/ordersApiSlice.ts";
 import {LoaderScreen} from "./LoaderScreen.tsx";
-import {clearCartItems} from "../slices/cartSlice.ts";
 import {toast} from "react-toastify";
 
 export const PlaceOrderScreen = () => {
@@ -27,9 +26,11 @@ export const PlaceOrderScreen = () => {
                 taxPrice: cart.taxPrice,
                 totalPrice: cart.totalPrice
             }).unwrap();
-            dispatch(clearCartItems());
+            console.log('res ',res.orderItems);
+            // dispatch(clearCartItems());
             navigate(`/order/${res._id}`);
         } catch (err) {
+            console.log('Error',err)
             toast.error(err);
         }
     }

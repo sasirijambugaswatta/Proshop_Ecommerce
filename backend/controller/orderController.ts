@@ -25,9 +25,11 @@ const addOrderItems = asyncHandler(async (req:Request, res:Response) => {
         shippingAddress,
         paymentMethod,
         itemsPrice,
-        taxPrice,
         shippingPrice,
+        taxPrice,
         totalPrice} = req.body;
+
+    console.log("Order Items: ",orderItems)
 
     if(orderItems && orderItems.length === 0){
         res.status(400);
@@ -50,6 +52,7 @@ const addOrderItems = asyncHandler(async (req:Request, res:Response) => {
             totalPrice
         });
         const createdOrder = await order.save();
+
         res.status(201).json(createdOrder);
     }
 });

@@ -7,7 +7,7 @@
   "scripts": {
     "compile": "tsc --watch",
     "start": "nodemon --enable-source-maps dist/src/main.js",
-    "data:import": "tsc src/seeder.ts && node src/seeder.js",
+    "data:import": "node src/seeder.js",
     "data-destroy": "node src/seeder -d"
   },
   "keywords": [],
