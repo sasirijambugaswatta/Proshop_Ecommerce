@@ -1,5 +1,10 @@
 import {Link, useParams} from "react-router-dom";
-import {useGetOrderDetailsQuery, useGetPaypalClientIdQuery, usePayOrderMutation} from "../slices/ordersApiSlice.ts";
+import {
+    useDeliverOrderMutation,
+    useGetOrderDetailsQuery,
+    useGetPaypalClientIdQuery,
+    usePayOrderMutation
+} from "../slices/ordersApiSlice.ts";
 import {LoaderScreen} from "./LoaderScreen.tsx";
 import {Message} from "../Components/Message.tsx";
 import {Button, Card, Col, Image, ListGroup, ListGroupItem, Row} from "react-bootstrap";
@@ -14,6 +19,8 @@ export const OrderScreen = () => {
     const {data: order , isError, isLoading, refetch } = useGetOrderDetailsQuery(orderId!);
 
     const [payOrder, {isLoading: isPayLoading}] = usePayOrderMutation();
+
+    const [deliverOrder, {isLoading: isDeliverLoading}] = useDeliverOrderMutation();
 
     const [{isPending}, paypalDispatch] = usePayPalScriptReducer();
 
@@ -77,6 +84,16 @@ export const OrderScreen = () => {
 
     function onError(err) {
         toast.error(err.message);
+    }
+
+    async function deliverOrderHandler() {
+        try {
+            await deliverOrder(orderId!).unwrap();
+            refetch();
+            toast.success('Order delivered')
+        } catch (err) {
+            toast.error(err?.data?.message || err);
+        }
     }
 
     return isLoading ? <LoaderScreen /> : isError ?
@@ -198,7 +215,18 @@ export const OrderScreen = () => {
                                   )
                               }
 
-                              {/* Mark as delivered Placeholder */}
+                              {isDeliverLoading && <LoaderScreen/>}
+                              {userInfo && userInfo.isAdmin && order.isPaid && !order.isDelivered && (
+                                  <ListGroupItem>
+                                      <Button
+                                          type="button"
+                                          className="btn btn-block"
+                                          onClick={deliverOrderHandler}
+                                      >
+                                          Mark As Delivered
+                                      </Button>
+                                  </ListGroupItem>
+                              )}
                           </ListGroup>
                       </Card>
                   </Col>
