@@ -23,6 +23,8 @@ import {CartScreen} from "./screens/CartScreen.tsx";
  import {OrderScreen} from "./screens/OrderScreen.tsx";
  import {PayPalScriptProvider} from "@paypal/react-paypal-js";
  import {ProfileScreen} from "./screens/ProfileScreen.tsx";
+ import {AdminRoute} from "./Components/AdminRoute.tsx";
+ import {OrderListScreen} from "./screens/admin/OrderListScreen.tsx";
 
 const router = createBrowserRouter(
     createRoutesFromElements(
@@ -39,6 +41,10 @@ const router = createBrowserRouter(
                 <Route path={'/placeorder'} element={<PlaceOrderScreen/>}/>
                 <Route path={'/order/:id'} element={<OrderScreen/>}/>
                 <Route path={'/profile'} element={<ProfileScreen/>}/>
+            </Route>
+
+            <Route path={''} element={<AdminRoute/>}>
+                <Route path={'/admin/orderlist'} element={<OrderListScreen/>}/>
             </Route>
         </Route>
     )
