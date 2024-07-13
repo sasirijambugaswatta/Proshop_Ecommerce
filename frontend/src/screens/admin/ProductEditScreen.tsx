@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 import {Link, useNavigate, useParams} from "react-router-dom";
-import {useUpdateProductsMutation} from "../../slices/productApiSlice.ts";
+import {useUpdateProductsMutation, useUploadProductImageMutation} from "../../slices/productApiSlice.ts";
 import {useGetSingleProductQuery} from "../../slices/getSingleProductDetailsApiSlice.ts";
 import {LoaderScreen} from "../LoaderScreen.tsx";
 import {Message} from "../../Components/Message.tsx";
@@ -21,6 +21,7 @@ export const ProductEditScreen = () => {
     const {data: product, isLoading, refetch, error} = useGetSingleProductQuery(productId!);
 
     const [updateProduct, {isLoading: isLoadingUpdate}] = useUpdateProductsMutation();
+    const [uploadProductImage, {isLoading: isLoadingUploadImage}] = useUploadProductImageMutation();
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -39,7 +40,7 @@ export const ProductEditScreen = () => {
         refetch();
     }, [refetch]);
 
-    async function submitHandler(e:Event) {
+    async function submitHandler(e) {
         e.preventDefault();
         const updatedProduct = {
             _id: productId,
@@ -58,6 +59,18 @@ export const ProductEditScreen = () => {
         }else {
             toast.success('Product has been updated');
             navigate('/admin/productlist');
+        }
+    }
+
+    async function uploadFileHandler(e) {
+        const formData = new FormData();
+        formData.append('image', (e.target as HTMLInputElement)!.files![0]);
+        try {
+            const res = await uploadProductImage(formData).unwrap();
+            toast.success('Image uploaded');
+            setImage(res.image);
+        } catch (err) {
+            toast.error(err || err?.data.message)
         }
     }
 
@@ -84,7 +97,7 @@ export const ProductEditScreen = () => {
                                 />
                         </FormGroup>
                         <FormGroup className={'my-2'}>
-                            <FormLabel htmlFor={'price'}>Name</FormLabel>
+                            <FormLabel htmlFor={'price'}>Price</FormLabel>
                             <FormControl
                                 type={'number'}
                                 name={'price'}
@@ -95,6 +108,16 @@ export const ProductEditScreen = () => {
                         </FormGroup>
 
                         {/*Image Input placeHolder*/}
+
+                        <FormGroup className={'my-2'}>
+                            <FormLabel>Image</FormLabel>
+                            <FormControl type={'text'} name={'image'} value={image}
+                                         onChange={(e) => setImage(e.target.value)}/>
+                            <FormControl type={'file'} id={'image'}
+                                         accept={'.jpg,.png,.jpeg'}  onChange={uploadFileHandler}/>
+
+                        </FormGroup>
+
 
                         <FormGroup className={'my-2'}>
                             <FormLabel htmlFor={'brand'}>Brand</FormLabel>

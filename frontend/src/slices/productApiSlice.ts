@@ -1,5 +1,5 @@
 import {apiSlice} from "./apiSlice.ts";
-import {PRODUCTS_URL} from "../../contants.ts";
+import {PRODUCTS_URL, UPLOAD_URL} from "../../contants.ts";
 
 export const productApiSlice = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
@@ -27,7 +27,18 @@ export const productApiSlice = apiSlice.injectEndpoints({
             }),
             invalidatesTags: ['Product'],
         }),
+        uploadProductImage: builder.mutation({
+            query: (image) => ({
+                url: `${UPLOAD_URL}`,
+                method: 'post',
+                credentials: "include",
+                body: image
+            }),
+        }),
     })
 })
 
-export const {useGetProductsQuery, useCreateProductMutation, useUpdateProductsMutation} = productApiSlice;
+export const {useGetProductsQuery,
+    useCreateProductMutation,
+    useUpdateProductsMutation,
+useUploadProductImageMutation} = productApiSlice;
