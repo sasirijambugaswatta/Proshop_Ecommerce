@@ -51,7 +51,7 @@ export const ProductScreen = () => {
 
                         <Col md={5}>
                             <Image src={product!.image} alt={product!.name} fluid={true}/>
-                            {product.image}
+                            {/*{product.image}*/}
                         </Col>
 
                         <Col md={4}>
