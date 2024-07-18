@@ -72,7 +72,7 @@ export const ProductListScreen = () => {
                                 <LinkContainer to={`/admin/products/${product._id}/edit`}>
                                     <Button variant={'light'} className={'btn-sm mx-2'}><FaEdit/></Button>
                                 </LinkContainer>
-                                <LinkContainer to={`/admin/products/${product._id}/delete`}>
+                                <LinkContainer to={`/admin/productlist`}>
                                     <Button variant={'danger'} className={'btn-sm mx-2'} onClick={() => deleteHandler(product._id)}><FaTrash color={'white'}/></Button>
                                 </LinkContainer>
                             </td>
