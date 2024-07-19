@@ -3,6 +3,7 @@ import {Product} from "../Components/Product.tsx";
 import {useGetProductsQuery} from "../slices/productApiSlice.ts";
 import {LoaderScreen} from "./LoaderScreen.tsx";
 import {Message} from "../Components/Message.tsx";
+import {useParams} from "react-router-dom";
 
 
 // import {useEffect, useState} from "react";
@@ -33,8 +34,8 @@ export const HomeScreen = () => {
         fetchProducts();
     }, []);*/
 
-
-    const {data: products,isLoading,isError:error} = useGetProductsQuery();
+    const {pageNumber} = useParams();
+    const {data,isLoading,isError:error} = useGetProductsQuery({pageNumber});
 
 
     return (
@@ -42,7 +43,7 @@ export const HomeScreen = () => {
             {isLoading ? (<LoaderScreen/>) : error ? (<Message variant={'danger'}>{error?.data?.message || error?.error}</Message>) : (<>
                 <h1>Latest Product</h1>
                 <Row>
-                    {products.length > 0 && products.map((product,id) => (
+                    {data.products.length > 0 && data.products.map((product,id) => (
                         <Col key={product.id} sm={12} md={6} lg={4} xl={3}>
                             <Product product={product}/>
                         </Col>
