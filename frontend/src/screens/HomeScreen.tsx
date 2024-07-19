@@ -5,6 +5,7 @@ import {LoaderScreen} from "./LoaderScreen.tsx";
 import {Message} from "../Components/Message.tsx";
 import {Link, useParams} from "react-router-dom";
 import {Paginate} from "../Components/Paginate.tsx";
+import {ProductCarousel} from "../Components/ProductCarousel.tsx";
 
 
 // import {useEffect, useState} from "react";
@@ -41,7 +42,7 @@ export const HomeScreen = () => {
 
     return (
         <>
-            {keyword && (
+            {!keyword ? (<ProductCarousel/>) : (
                 <Link to={'/'} className={'btn btn-outline-dark mb-4'}>Back</Link>
             )}
             {isLoading ? (<LoaderScreen/>) : error ? (<Message variant={'danger'}>{error?.data?.message || error?.error}</Message>) : (<>
