@@ -4,6 +4,7 @@ import {useGetProductsQuery} from "../slices/productApiSlice.ts";
 import {LoaderScreen} from "./LoaderScreen.tsx";
 import {Message} from "../Components/Message.tsx";
 import {useParams} from "react-router-dom";
+import {Paginate} from "../Components/Paginate.tsx";
 
 
 // import {useEffect, useState} from "react";
@@ -49,6 +50,7 @@ export const HomeScreen = () => {
                         </Col>
                     ))}
                 </Row>
+                <Paginate pages={data.pages} page={data.page} isAdmin={false} />
             </>)}
         </>
     );
