@@ -12,6 +12,7 @@ import {addToCart} from "../slices/cartSlice.ts";
 import {useCreateReviewMutation} from "../slices/productApiSlice.ts";
 import {Message} from "../Components/Message.tsx";
 import {toast} from "react-toastify";
+import {Meta} from "../Components/Meta.tsx";
 
 
 
@@ -73,7 +74,7 @@ export const ProductScreen = () => {
             {product && !isLoading && !isError ?
                 <>
                     <Link className={'btn btn-light my-3'} to={'/'}>Go Back</Link>
-
+                    <Meta title={product.name} description={product.description} keywords={product.keyword}/>
                     <Row>
 
                         <Col md={5}>

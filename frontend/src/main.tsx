@@ -1,4 +1,4 @@
- import React from 'react'
+import React from 'react'
 import ReactDOM from 'react-dom/client'
 import {
     createBrowserRouter,
@@ -14,31 +14,32 @@ import './index.css'
 import {HomeScreen} from "./screens/HomeScreen.tsx";
 import {ProductScreen} from "./screens/ProductScreen.tsx";
 import {CartScreen} from "./screens/CartScreen.tsx";
- import {LoginScreen} from "./screens/LoginScreen.tsx";
- import {RegisterScreen} from "./screens/RegisterScreen.tsx";
- import {ShippingScreen} from "./screens/ShippingScreen.tsx";
- import {PrivateRoute} from "./Components/PrivateRoute.tsx";
- import {PaymentScreen} from "./screens/PaymentScreen.tsx";
- import {PlaceOrderScreen} from "./screens/PlaceOrderScreen.tsx";
- import {OrderScreen} from "./screens/OrderScreen.tsx";
- import {PayPalScriptProvider} from "@paypal/react-paypal-js";
- import {ProfileScreen} from "./screens/ProfileScreen.tsx";
- import {AdminRoute} from "./Components/AdminRoute.tsx";
- import {OrderListScreen} from "./screens/admin/OrderListScreen.tsx";
- import {ProductListScreen} from "./screens/admin/ProductListScreen.tsx";
- import {ProductEditScreen} from "./screens/admin/ProductEditScreen.tsx";
- import {UserListScreen} from "./screens/admin/UserListScreen.tsx";
- import {UserEditScreen} from "./screens/admin/UserEditScreen.tsx";
+import {LoginScreen} from "./screens/LoginScreen.tsx";
+import {RegisterScreen} from "./screens/RegisterScreen.tsx";
+import {ShippingScreen} from "./screens/ShippingScreen.tsx";
+import {PrivateRoute} from "./Components/PrivateRoute.tsx";
+import {PaymentScreen} from "./screens/PaymentScreen.tsx";
+import {PlaceOrderScreen} from "./screens/PlaceOrderScreen.tsx";
+import {OrderScreen} from "./screens/OrderScreen.tsx";
+import {PayPalScriptProvider} from "@paypal/react-paypal-js";
+import {ProfileScreen} from "./screens/ProfileScreen.tsx";
+import {AdminRoute} from "./Components/AdminRoute.tsx";
+import {OrderListScreen} from "./screens/admin/OrderListScreen.tsx";
+import {ProductListScreen} from "./screens/admin/ProductListScreen.tsx";
+import {ProductEditScreen} from "./screens/admin/ProductEditScreen.tsx";
+import {UserListScreen} from "./screens/admin/UserListScreen.tsx";
+import {UserEditScreen} from "./screens/admin/UserEditScreen.tsx";
+import {HelmetProvider} from "react-helmet-async";
 
 const router = createBrowserRouter(
     createRoutesFromElements(
         <Route path={"/"} element={<App/>}>
             <Route index={true} path={"/"} element={<HomeScreen/>}/>
-            <Route  path={"/search/:keyword"} element={<HomeScreen/>}/>
-            <Route  path={"/page/:pageNumber"} element={<HomeScreen/>}/>
-            <Route  path={"/search/:keyword/page/:pageNumber"} element={<HomeScreen/>}/>
-            <Route  path={'/product/:id'} element={<ProductScreen/>}/>
-            <Route  path={'/cart'} element={<CartScreen/>}/>
+            <Route path={"/search/:keyword"} element={<HomeScreen/>}/>
+            <Route path={"/page/:pageNumber"} element={<HomeScreen/>}/>
+            <Route path={"/search/:keyword/page/:pageNumber"} element={<HomeScreen/>}/>
+            <Route path={'/product/:id'} element={<ProductScreen/>}/>
+            <Route path={'/cart'} element={<CartScreen/>}/>
             <Route path={'/login'} element={<LoginScreen/>}/>
             <Route path={'/register'} element={<RegisterScreen/>}/>
 
@@ -64,10 +65,12 @@ const router = createBrowserRouter(
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
-        <Provider store={store}>
-            <PayPalScriptProvider deferLoading={true} options={{clientId: "test"}}>
-                <RouterProvider router={router}/>
-            </PayPalScriptProvider>
-        </Provider>
+        <HelmetProvider>
+            <Provider store={store}>
+                <PayPalScriptProvider deferLoading={true} options={{clientId: "test"}}>
+                    <RouterProvider router={router}/>
+                </PayPalScriptProvider>
+            </Provider>
+        </HelmetProvider>
     </React.StrictMode>,
 )

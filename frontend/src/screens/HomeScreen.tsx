@@ -6,6 +6,7 @@ import {Message} from "../Components/Message.tsx";
 import {Link, useParams} from "react-router-dom";
 import {Paginate} from "../Components/Paginate.tsx";
 import {ProductCarousel} from "../Components/ProductCarousel.tsx";
+import {Meta} from "../Components/Meta.tsx";
 
 
 // import {useEffect, useState} from "react";
