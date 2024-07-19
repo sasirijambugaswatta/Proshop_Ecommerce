@@ -15,6 +15,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {useNavigate} from "react-router-dom";
 import {useLogoutMutation} from "../slices/usersApiSlice.ts";
 import {logout} from "../slices/authSlice.ts";
+import {SearchBox} from "./SearchBox.tsx";
 
 export const Header = () => {
 
@@ -51,6 +52,7 @@ export const Header = () => {
                     <NavbarToggle aria-controls={"basic-navbar-nav"}/>
                     <NavbarCollapse id={"basic-navbar-nav"}>
                         <Nav className="ms-auto">
+                           <SearchBox/>
                             <LinkContainer to={'/cart'}>
                                 <NavLink ><FaShoppingCart/>Cart
                                     {

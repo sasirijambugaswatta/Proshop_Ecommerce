@@ -3,7 +3,7 @@ import {Product} from "../Components/Product.tsx";
 import {useGetProductsQuery} from "../slices/productApiSlice.ts";
 import {LoaderScreen} from "./LoaderScreen.tsx";
 import {Message} from "../Components/Message.tsx";
-import {useParams} from "react-router-dom";
+import {Link, useParams} from "react-router-dom";
 import {Paginate} from "../Components/Paginate.tsx";
 
 
@@ -35,12 +35,15 @@ export const HomeScreen = () => {
         fetchProducts();
     }, []);*/
 
-    const {pageNumber} = useParams();
-    const {data,isLoading,isError:error} = useGetProductsQuery({pageNumber});
+    const {pageNumber, keyword} = useParams();
+    const {data,isLoading,isError:error} = useGetProductsQuery({pageNumber,keyword});
 
 
     return (
         <>
+            {keyword && (
+                <Link to={'/'} className={'btn btn-outline-dark mb-4'}>Back</Link>
+            )}
             {isLoading ? (<LoaderScreen/>) : error ? (<Message variant={'danger'}>{error?.data?.message || error?.error}</Message>) : (<>
                 <h1>Latest Product</h1>
                 <Row>
@@ -50,7 +53,7 @@ export const HomeScreen = () => {
                         </Col>
                     ))}
                 </Row>
-                <Paginate pages={data.pages} page={data.page} isAdmin={false} />
+                <Paginate pages={data.pages} page={data.page} isAdmin={false} keyword={keyword} />
             </>)}
         </>
     );
