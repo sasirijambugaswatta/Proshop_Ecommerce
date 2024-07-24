@@ -62,12 +62,11 @@ Proshop is a full-stack e-commerce application built using the MERN stack (Mongo
   - `config/` - Stores configuration files, such as database connection and payment gateway settings
 - **frontend**
   - `components/` - Contains reusable React components
-  - `pages/` - Defines the main pages of the application (e.g., home, product details, cart, checkout)
+  - `screens/` - Defines the main pages of the application (e.g., home, product details, cart, checkout)
   - `actions/` - Defines Redux actions for state management
-  - `reducers/` - Defines Redux reducers for state management
   - `store/` - Configures the Redux store
   - `utils/` - Contains utility functions and helpers
-  - `styles/` - Contains global CSS styles or SCSS files
+  - `styles/` - Contains global CSS styles
 
 ## Contributing
 
