@@ -7,7 +7,7 @@ Proshop is a full-stack e-commerce application built using the MERN stack (Mongo
 - User authentication and authorization
 - Product listing and search
 - Shopping cart and checkout process
-- Payment integration (e.g., PayPal, Stripe)
+- Payment integration (PayPal)
 - Order management and tracking
 - Admin panel for managing products, orders, and users
 
