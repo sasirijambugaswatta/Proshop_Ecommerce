@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {FormEvent, useEffect, useState} from "react";
 import {FormContainer} from "../Components/FormContainer.tsx";
 import {Button, Col, Form, FormGroup, FormLabel, Row} from "react-bootstrap";
 import {Link, useLocation, useNavigate} from "react-router-dom";
@@ -7,6 +7,8 @@ import {useLoginMutation} from "../slices/usersApiSlice.ts";
 import {setCredentials} from "../slices/authSlice.ts";
 import {toast} from "react-toastify";
 import {LoaderScreen} from "./LoaderScreen.tsx";
+import {RootState} from "../Components/Header.tsx";
+import {FetchBaseQueryError} from "@reduxjs/toolkit/query";
 
 export const LoginScreen = () => {
     const [email, setEmail] = useState('');
@@ -16,7 +18,7 @@ export const LoginScreen = () => {
     const navigate = useNavigate();
 
     const [loginApiCall , {isLoading}] = useLoginMutation();
-    const {userInfo} = useSelector((state) => state.auth);
+    const {userInfo} = useSelector((state:RootState) => state.auth);
 
     const {search} = useLocation();
 
@@ -29,16 +31,28 @@ export const LoginScreen = () => {
         }
     }, [userInfo, redirect, navigate]);
 
-    const submitHandler = async (e) => {
+    const submitHandler = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-       try{
-           const res = await loginApiCall({email, password}).unwrap();
-           dispatch(setCredentials({...res}));
-           navigate(redirect);
-       }catch (err){
-           toast.error(err?.data?.message || err.error);
-       }
+        try {
+            const res = await loginApiCall({ email, password }).unwrap();
+            dispatch(setCredentials({ ...res }));
+            navigate(redirect);
+        } catch (err) {
+            if (isFetchBaseQueryError(err)) {
+                // This is a FetchBaseQueryError
+                const fetchError = err as FetchBaseQueryError;
+                toast.error((fetchError.data as Error).message || 'An error occurred');
+            } else {
+                // This is a custom error
+                toast.error((err as Error).message || 'An error occurred');
+            }
+        }
     };
+
+    function isFetchBaseQueryError(error: unknown): error is FetchBaseQueryError {
+        return typeof error === 'object' && error != null && 'status' in error;
+    }
+
     return (
         <FormContainer>
             <h1>Sign In</h1>

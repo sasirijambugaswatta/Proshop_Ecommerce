@@ -9,6 +9,21 @@ import {Message} from "../Components/Message.tsx";
 import {LoaderScreen} from "./LoaderScreen.tsx";
 import {FaTimes} from "react-icons/fa";
 import {LinkContainer} from "react-router-bootstrap";
+import {RootState, UserInfo} from "../Components/Header.tsx";
+import {SerializedError} from "@reduxjs/toolkit";
+import {FetchBaseQueryError} from "@reduxjs/toolkit/query";
+
+export interface Order {
+    _id: string;
+    createdAt: string;
+    totalPrice: number;
+    isPaid: boolean;
+    paidAt?: string;
+    isDelivered: boolean;
+    deliveredAt?: string;
+    user:UserInfo
+}
+
 
 export const ProfileScreen = () => {
     const [name, setName] = useState("");
@@ -18,7 +33,7 @@ export const ProfileScreen = () => {
 
     const dispatch = useDispatch();
 
-    const {userInfo} = useSelector(state => state.auth);
+    const {userInfo} = useSelector((state: RootState) => state.auth);
 
     const [updateProfile] = useProfileMutation();
 
@@ -42,10 +57,31 @@ export const ProfileScreen = () => {
                 dispatch(setCredentials({...res}));
                 toast.success('Profile updated successfully');
             } catch (err) {
-                toast.error(err?.data?.message || err.error);
+                if (err instanceof Error) {
+                    toast.error(err.message);
+                } else {
+                    toast.error('An unknown error occurred');
+                }
             }
         }
     }
+
+    const getErrorMessage = (error: FetchBaseQueryError | SerializedError | undefined): string => {
+        if (!error) {
+            return 'An unknown error occurred';
+        }
+
+        if ('data' in error) {
+            // This is a FetchBaseQueryError
+            return (error.data as { message: string })?.message || 'An error occurred';
+        }
+
+        if ('message' in error && error.message) {
+            return error.message;
+        }
+
+        return 'An error occurred';
+    };
 
     return (
         <>
@@ -100,7 +136,7 @@ export const ProfileScreen = () => {
                 </Col>
                 <Col md={9}>
                     <h2>My Orders</h2>
-                    {isLoading ? (<LoaderScreen/>) : error ? <Message variant={'danger'}>{error?.data?.message || error.error} </Message> : (
+                    {isLoading ? (<LoaderScreen/>) : error ? <Message variant={'danger'}>{getErrorMessage(error)} </Message> : (
                         <Table striped bordered={true} hover={true} responsive className={'table-sm'}>
                             <thead>
                             <tr>
@@ -113,15 +149,15 @@ export const ProfileScreen = () => {
                             </tr>
                             </thead>
                             <tbody>
-                            {orders?.map(order => (
+                            {orders?.map((order: Order) => (
                                 <tr key={order._id}>
                                     <td>{order._id}</td>
                                     <td>{order.createdAt.substring(0, 10)}</td>
                                     <td>{order.totalPrice}</td>
-                                    <td>{order.isPaid ? order.paidAt.substring(0, 10) : (
+                                    <td>{order.isPaid ? order.paidAt!.substring(0, 10) : (
                                         <FaTimes color={'red'}/>
                                     )}</td>
-                                    <td>{order.isDelivered ? order.deliveredAt.substring(0, 10) : (
+                                    <td>{order.isDelivered ? order.deliveredAt!.substring(0, 10) : (
                                         <FaTimes color={'red'}/>
                                     )}</td>
                                     <td>

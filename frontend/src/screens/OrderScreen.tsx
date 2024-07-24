@@ -8,10 +8,27 @@ import {
 import {LoaderScreen} from "./LoaderScreen.tsx";
 import {Message} from "../Components/Message.tsx";
 import {Button, Card, Col, Image, ListGroup, ListGroupItem, Row} from "react-bootstrap";
-import {PayPalButtons, usePayPalScriptReducer} from "@paypal/react-paypal-js";
+import {
+    DISPATCH_ACTION,
+    PayPalButtons,
+    SCRIPT_LOADING_STATE,
+    usePayPalScriptReducer
+} from "@paypal/react-paypal-js";
 import {useSelector} from "react-redux";
 import {useEffect} from "react";
 import {toast} from "react-toastify";
+import { RootState} from "../Components/Header.tsx";
+import {OnApproveData, OnApproveActions, CreateOrderData, CreateOrderActions} from "@paypal/paypal-js";
+
+
+interface OrderItem {
+    _id: string;
+    name: string;
+    qty: number;
+    image: string;
+    price: number;
+    product: string;
+}
 
 export const OrderScreen = () => {
     const {id: orderId} = useParams();
@@ -26,21 +43,21 @@ export const OrderScreen = () => {
 
     const {data: paypal ,
         isLoading: isPaypalClientLoading,
-        error: paypalClientError} = useGetPaypalClientIdQuery();
+        error: paypalClientError} = useGetPaypalClientIdQuery('');
 
-    const {userInfo} = useSelector(state => state.auth);
+    const {userInfo} = useSelector((state: RootState) => state.auth);
 
     useEffect(() => {
         if(!paypalClientError && !isPaypalClientLoading && paypal.clientId){
             const loadPaypalScript = async () => {
                 paypalDispatch({
-                    type: 'resetOptions',
+                    type: DISPATCH_ACTION.RESET_OPTIONS,
                     value: {
-                        'client-id': paypal.clientId,
+                        clientId: paypal.clientId,
                         currency: "USD",
                     }
                 });
-                paypalDispatch({type: 'setLoadingStatus', value: 'pending'});
+                paypalDispatch({type: DISPATCH_ACTION.LOADING_STATUS, value: SCRIPT_LOADING_STATE.PENDING});
             }
             if(order && !order.isPaid){
                 if(!window.paypal){
@@ -50,40 +67,53 @@ export const OrderScreen = () => {
         }
     }, [order, paypal, paypalDispatch, isPaypalClientLoading, paypalClientError]);
 
-    async function onApproveTest() {
-        await payOrder({orderId, details: {}});
-        refetch();
-        toast.success('Payment successful');
-    }
+    // async function onApproveTest() {
+    //     await payOrder({orderId, details: {}});
+    //     refetch();
+    //     toast.success('Payment successful');
+    // }
 
-    function createOrder(data, actions) {
+    function createOrder(_data:CreateOrderData, actions:CreateOrderActions) {
         return actions.order.create({
+            intent: 'CAPTURE',
             purchase_units: [
                 {
                     amount: {
-                        value: order.totalPrice
+                        currency_code: 'USD',
+                        value: order.totalPrice.toString(),
                     }
                 }
             ]
-        }).then((orderId) => {
+        }).then((orderId:string) => {
             return orderId;
         })
     }
 
-    function onApprove(data, actions) {
-        return actions.order.capture().then(async function (details) {
+    async function onApprove(_data: OnApproveData, actions:OnApproveActions) {
+        return actions.order!.capture().then(async function (details) {
             try {
                 await payOrder({orderId, details});
                 refetch();
                 toast.success('Payment successful');
             } catch (err) {
-                toast.error(err?.data?.message || err);
+                if (err instanceof Error) {
+                    toast.error(err.message);
+                } else {
+                    toast.error('An unknown error occurred');
+                }
             }
         })
     }
 
-    function onError(err) {
-        toast.error(err.message);
+    // function onError(err:Error) {
+    //     toast.error(err.message);
+    // }
+    function onError(err: Record<string, unknown>) {
+        if (err && typeof err === 'object' && 'message' in err && typeof err.message === 'string') {
+            toast.error(err.message);
+        } else {
+            toast.error('An error occurred during the PayPal transaction.');
+        }
     }
 
     async function deliverOrderHandler() {
@@ -92,7 +122,11 @@ export const OrderScreen = () => {
             refetch();
             toast.success('Order delivered')
         } catch (err) {
-            toast.error(err?.data?.message || err);
+            if (err instanceof Error) {
+                toast.error(err.message);
+            } else {
+                toast.error('An unknown error occurred');
+            }
         }
     }
 
@@ -144,7 +178,7 @@ export const OrderScreen = () => {
 
                           <ListGroupItem>
                               <h2>Order Items</h2>
-                              {order.orderItems.map((item, index) => (
+                              {order.orderItems.map((item:OrderItem, index:number|string) => (
                                   <ListGroupItem key={index}>
                                       <Row>
                                           <Col md={2}>

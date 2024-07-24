@@ -1,7 +1,15 @@
 import {Nav, NavItem, NavLink} from "react-bootstrap";
 import {LinkContainer} from "react-router-bootstrap";
+import React from "react";
 
-export const CheckoutSteps = ({step1, step2, step3, step4}) => {
+interface CheckoutStepsProps {
+    step1?: boolean;
+    step2?: boolean;
+    step3?: boolean;
+    step4?: boolean;
+}
+
+export const CheckoutSteps:React.FC<CheckoutStepsProps> = ({step1, step2, step3, step4}) => {
     return (
         <Nav className={'justify-content-center mb-4'}>
             <NavItem>

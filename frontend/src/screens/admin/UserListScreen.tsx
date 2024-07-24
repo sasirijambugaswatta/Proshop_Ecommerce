@@ -5,6 +5,8 @@ import {LinkContainer} from "react-router-bootstrap";
 import {FaCheck, FaEdit, FaTimes, FaTrash} from "react-icons/fa";
 import {useDeleteUserMutation, useGetUsersQuery} from "../../slices/usersApiSlice.ts";
 import {toast} from "react-toastify";
+import {getErrorMessage} from "../../utils/errUtil.ts";
+import {UserInfo} from "../../Components/Header.tsx";
 
 export const UserListScreen = () => {
 
@@ -18,7 +20,11 @@ export const UserListScreen = () => {
                 toast.success('User deleted');
                 refetch();
             } catch (err) {
-                toast.error(err?.data?.message || err?.error)
+                if (err instanceof Error) {
+                    toast.error(err.message);
+                } else {
+                    toast.error('An unknown error occurred');
+                }
             }
         }
     }
@@ -27,7 +33,7 @@ export const UserListScreen = () => {
         <>
             <h1>Users</h1>
             {isLoadingDelete && <LoaderScreen/>}
-            {isLoading ? (<LoaderScreen/>) : error ? (<Message variant={'danger'}>{error?.data?.message || error?.error}</Message>) : (
+            {isLoading ? (<LoaderScreen/>) : error ? (<Message variant={'danger'}>{getErrorMessage(error)}</Message>) : (
                 <Table striped={true} bordered={true} hover={true} responsive={true} className={'table-sm'}>
                     <thead>
                     <tr>
@@ -39,7 +45,7 @@ export const UserListScreen = () => {
                     </tr>
                     </thead>
                     <tbody>
-                    {users?.map(user => (
+                    {users?.map((user:UserInfo) => (
                         <tr key={user._id}>
                             <td>{user._id}</td>
                             <td>{user.name}</td>
@@ -49,7 +55,7 @@ export const UserListScreen = () => {
                                 <LinkContainer to={`/admin/user/${user._id}/edit`}>
                                     <Button className={'btn-sm'}><FaEdit/></Button>
                                 </LinkContainer>
-                                <Button className={'btn-sm'} variant={'danger'} onClick={() => deleteHandler(user._id)}><FaTrash/></Button>
+                                <Button className={'btn-sm'} variant={'danger'} onClick={() => deleteHandler(user._id!)}><FaTrash/></Button>
                             </td>
                         </tr>
                     ))}

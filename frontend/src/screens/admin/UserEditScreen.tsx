@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {FormEvent, useEffect, useState} from "react";
 import {Link, useNavigate, useParams} from "react-router-dom";
 import {LoaderScreen} from "../LoaderScreen.tsx";
 import {Message} from "../../Components/Message.tsx";
@@ -6,6 +6,8 @@ import {Button, Form, FormCheck, FormControl, FormGroup, FormLabel} from "react-
 import {FormContainer} from "../../Components/FormContainer.tsx";
 import {toast} from "react-toastify";
 import {useGetUserDetailsQuery, useUpdateUserMutation} from "../../slices/usersApiSlice.ts";
+import {getErrorMessage} from "../../utils/errUtil.ts";
+
 
 export const UserEditScreen = () => {
     const {id: userId} = useParams();
@@ -14,7 +16,7 @@ export const UserEditScreen = () => {
     const [email, setEmail] = useState('');
     const [isAdmin, setIsAdmin] = useState(false);
 
-    const {data: user, isLoading: isLoadingUser, refetch, isError} = useGetUserDetailsQuery(userId);
+    const {data: user, isLoading: isLoadingUser, refetch, isError,error} = useGetUserDetailsQuery(userId);
 
     const [updateUser, {isLoading: isLoadingUpdate}] = useUpdateUserMutation();
 
@@ -30,7 +32,7 @@ export const UserEditScreen = () => {
     }, [user]);
 
 
-    async function submitHandler(e) {
+    async function submitHandler(e:FormEvent) {
         e.preventDefault();
         try{
             const updatedUser = {
@@ -44,7 +46,11 @@ export const UserEditScreen = () => {
             refetch();
             navigate('/admin/userlist');
         }catch (err){
-            toast.error(err?.data?.message || err?.error)
+            if (err instanceof Error) {
+                toast.error(err.message);
+            } else {
+                toast.error('An unknown error occurred');
+            }
         }
     }
 
@@ -61,7 +67,7 @@ return (
             {isLoadingUpdate && (<LoaderScreen/>)}
 
             {isLoadingUser ? (<LoaderScreen/>) : isError ? (
-                <Message variant={'danger'}>{isError?.data?.message || isError?.error}</Message>) : (
+                <Message variant={'danger'}>{getErrorMessage(error)}</Message>) : (
                 <Form onSubmit={submitHandler}>
                     <FormGroup className={'my-2'}>
                         <FormLabel htmlFor={'name'}>Name</FormLabel>

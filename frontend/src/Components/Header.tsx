@@ -17,22 +17,49 @@ import {useLogoutMutation} from "../slices/usersApiSlice.ts";
 import {logout} from "../slices/authSlice.ts";
 import {SearchBox} from "./SearchBox.tsx";
 
+export interface RootState {
+    cart: {
+        cartItems: CartItem[];
+    };
+    auth: {
+        userInfo: UserInfo ;
+    };
+}
+
+export interface CartItem {
+    price?: number;
+    qty?: number;
+    shippingAddress?: ShippingAddress
+}
+
+type ShippingAddress = {
+    address: string;
+    city: string;
+    postalCode: string;
+    country: string;
+};
+
+export interface UserInfo {
+    _id?: string;
+    name: string;
+    email:string
+    isAdmin: boolean;
+}
+
 export const Header = () => {
 
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error
-    const {cartItems: cartItem} = useSelector((state) => state.cart);
-    const {userInfo} = useSelector((state) => state.auth);
+    const {cartItems: cartItem} = useSelector((state:RootState) => state.cart);
+    const {userInfo} = useSelector((state:RootState) => state.auth);
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const [logoutApiiCall] = useLogoutMutation();
+    const [logoutApiCall] = useLogoutMutation();
 
 
     async function logoutHandler() {
         try {
-            await logoutApiiCall().unwrap();
+            await logoutApiCall('').unwrap();
             dispatch(logout());
             navigate('/login');
         }catch (err){
@@ -58,7 +85,7 @@ export const Header = () => {
                                     {
                                         cartItem.length > 0 && (
                                             <Badge pill bg={'success'} style={{marginLeft: '5px'}}>
-                                                {cartItem.reduce((acc, item) => acc + item.qty, 0)}
+                                                {cartItem.reduce((acc, item) => acc + item.qty!, 0)}
                                             </Badge>
                                         )
                                     }

@@ -1,5 +1,5 @@
 import {Link, useNavigate} from "react-router-dom";
-import {useDispatch, useSelector} from "react-redux";
+import { useSelector} from "react-redux";
 import {useEffect} from "react";
 import {CheckoutSteps} from "../Components/CheckoutSteps.tsx";
 import {Button, Card, Col, Image, ListGroup, ListGroupItem, Row} from "react-bootstrap";
@@ -8,10 +8,39 @@ import {useCreateOrderMutation} from "../slices/ordersApiSlice.ts";
 import {LoaderScreen} from "./LoaderScreen.tsx";
 import {toast} from "react-toastify";
 
+interface RootState {
+    cart: {
+        cartItems: CartItem[];
+        shippingAddress: ShippingAddress;
+        paymentMethod: PaymentMethod;
+        itemsPrice: number;
+        shippingPrice: number;
+        taxPrice: number;
+        totalPrice: number;
+    };
+}
+
+type CartItem = {
+    _id: string;
+    name: string;
+    qty: number;
+    price: number;
+    image?: string;
+};
+
+type ShippingAddress = {
+    address: string;
+    city: string;
+    postalCode: string;
+    country: string;
+};
+
+type PaymentMethod = string;
+
 export const PlaceOrderScreen = () => {
     const navigate = useNavigate();
-    const dispatch = useDispatch();
-    const cart = useSelector(state => state.cart);
+    // const dispatch = useDispatch();
+    const cart = useSelector((state: RootState) => state.cart);
 
     const [createOrder, {isLoading, isError}] = useCreateOrderMutation();
 
@@ -30,8 +59,11 @@ export const PlaceOrderScreen = () => {
             // dispatch(clearCartItems());
             navigate(`/order/${res._id}`);
         } catch (err) {
-            console.log('Error',err)
-            toast.error(err);
+            if (err instanceof Error) {
+                toast.error(err.message);
+            } else {
+                toast.error('An unknown error occurred');
+            }
         }
     }
 
@@ -73,7 +105,7 @@ export const PlaceOrderScreen = () => {
                                 <Message>Your cart is empty</Message>
                             ) : (
                                 <ListGroup variant={'flush'}>
-                                    {cart.cartItems.map((item, index) => (
+                                    {cart.cartItems.map((item:CartItem, index:number) => (
                                         <ListGroupItem key={index}>
                                             <Row>
                                                 <Col md={2}>
@@ -116,7 +148,7 @@ export const PlaceOrderScreen = () => {
                             <ListGroupItem>
                                 <Row>
                                     <Col>Shipping</Col>
-                                    <Col>$ {cart.shippngPrice}</Col>
+                                    <Col>$ {cart.shippingPrice}</Col>
                                 </Row>
                             </ListGroupItem>
 

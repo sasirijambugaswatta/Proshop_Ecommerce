@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {FormEvent, useEffect, useState} from "react";
 import {Link, useNavigate, useParams} from "react-router-dom";
 import {useUpdateProductsMutation, useUploadProductImageMutation} from "../../slices/productApiSlice.ts";
 import {useGetSingleProductQuery} from "../../slices/getSingleProductDetailsApiSlice.ts";
@@ -7,6 +7,7 @@ import {Message} from "../../Components/Message.tsx";
 import {Button, Form, FormControl, FormGroup, FormLabel} from "react-bootstrap";
 import {FormContainer} from "../../Components/FormContainer.tsx";
 import {toast} from "react-toastify";
+import {getErrorMessage} from "../../utils/errUtil.ts";
 
 export const ProductEditScreen = () => {
     const {id: productId} = useParams();
@@ -21,7 +22,7 @@ export const ProductEditScreen = () => {
     const {data: product, isLoading, refetch, error} = useGetSingleProductQuery(productId!);
 
     const [updateProduct, {isLoading: isLoadingUpdate}] = useUpdateProductsMutation();
-    const [uploadProductImage, {isLoading: isLoadingUploadImage}] = useUploadProductImageMutation();
+    const [uploadProductImage] = useUploadProductImageMutation();
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -40,7 +41,7 @@ export const ProductEditScreen = () => {
         refetch();
     }, [refetch]);
 
-    async function submitHandler(e) {
+    async function submitHandler(e:FormEvent) {
         e.preventDefault();
         const updatedProduct = {
             _id: productId,
@@ -54,15 +55,15 @@ export const ProductEditScreen = () => {
         };
         const result = await updateProduct(updatedProduct);
 
-        if (result.error) {
-            toast.error(result.error);
-        }else {
+        if (result.error instanceof Error) {
+            toast.error(result.error.message);
+        } else {
             toast.success('Product has been updated');
             navigate('/admin/productlist');
         }
     }
 
-    async function uploadFileHandler(e) {
+    async function uploadFileHandler(e:FormEvent) {
         const formData = new FormData();
         formData.append('image', (e.target as HTMLInputElement)!.files![0]);
         try {
@@ -70,7 +71,11 @@ export const ProductEditScreen = () => {
             toast.success('Image uploaded');
             setImage(res.image);
         } catch (err) {
-            toast.error(err || err?.data.message)
+            if (err instanceof Error) {
+                toast.error(err.message);
+            } else {
+                toast.error('An unknown error occurred');
+            }
         }
     }
 
@@ -84,7 +89,7 @@ export const ProductEditScreen = () => {
                 {isLoadingUpdate && (<LoaderScreen/>)}
 
                 {isLoading ? (<LoaderScreen/>) : error ? (
-                    <Message variant={'danger'}>{error?.data?.message || error?.error}</Message>) : (
+                    <Message variant={'danger'}>{getErrorMessage(error)}</Message>) : (
                     <Form onSubmit={submitHandler}>
                         <FormGroup className={'my-2'}>
                                 <FormLabel htmlFor={'name'}>Name</FormLabel>

@@ -1,28 +1,20 @@
 import {Col, Row} from "react-bootstrap";
-import {Product} from "../Components/Product.tsx";
+import {Product, ProductType} from "../Components/Product.tsx";
 import {useGetProductsQuery} from "../slices/productApiSlice.ts";
 import {LoaderScreen} from "./LoaderScreen.tsx";
 import {Message} from "../Components/Message.tsx";
 import {Link, useParams} from "react-router-dom";
 import {Paginate} from "../Components/Paginate.tsx";
 import {ProductCarousel} from "../Components/ProductCarousel.tsx";
-import {Meta} from "../Components/Meta.tsx";
-
+import {FetchBaseQueryError} from "@reduxjs/toolkit/query";
 
 // import {useEffect, useState} from "react";
 // import axios from "axios";
 
-export type ProductType = {
-    id: string;
-    name: string;
-    image: string;
-    description: string;
-    brand: string;
-    category: string;
-    price: number;
-    countInStock: number;
-    rating: number;
-    numReviews: number;
+interface ProductsData {
+    products: ProductType[];
+    pages: number;
+    page: number;
 }
 
 export const HomeScreen = () => {
@@ -38,25 +30,51 @@ export const HomeScreen = () => {
     }, []);*/
 
     const {pageNumber, keyword} = useParams();
-    const {data,isLoading,isError:error} = useGetProductsQuery({pageNumber,keyword});
+    const {data,isLoading,isError,error} = useGetProductsQuery({pageNumber,keyword});
 
+    if (isLoading) return <LoaderScreen />;
+
+    if (isError) {
+        let errorMessage = 'An error occurred';
+        if (typeof error === 'object' && error !== null) {
+            if ('status' in error) {
+                // This is a FetchBaseQueryError
+                const fetchError = error as FetchBaseQueryError;
+                errorMessage = 'error' in fetchError ? fetchError.error : JSON.stringify(fetchError.data);
+            } else {
+                // This is a custom error
+                errorMessage = (error as Error).message;
+            }
+        }
+        return <Message variant="danger">{errorMessage}</Message>;
+    }
+
+    const productsData = data as ProductsData;
 
     return (
         <>
-            {!keyword ? (<ProductCarousel/>) : (
-                <Link to={'/'} className={'btn btn-outline-dark mb-4'}>Back</Link>
+            {!keyword ? (
+                <ProductCarousel />
+            ) : (
+                <Link to="/" className="btn btn-outline-dark mb-4">
+                    Back
+                </Link>
             )}
-            {isLoading ? (<LoaderScreen/>) : error ? (<Message variant={'danger'}>{error?.data?.message || error?.error}</Message>) : (<>
-                <h1>Latest Product</h1>
-                <Row>
-                    {data.products.length > 0 && data.products.map((product,id) => (
-                        <Col key={product.id} sm={12} md={6} lg={4} xl={3}>
-                            <Product product={product}/>
-                        </Col>
-                    ))}
-                </Row>
-                <Paginate pages={data.pages} page={data.page} isAdmin={false} keyword={keyword} />
-            </>)}
+
+            <h1>Latest Products</h1>
+            <Row>
+                {productsData.products.map((product: ProductType) => (
+                    <Col key={product.id} sm={12} md={6} lg={4} xl={3}>
+                        <Product product={product} />
+                    </Col>
+                ))}
+            </Row>
+            <Paginate
+                pages={productsData.pages}
+                page={productsData.page}
+                isAdmin={false}
+                keyword={keyword || ''}
+            />
         </>
     );
-};/**/
+};

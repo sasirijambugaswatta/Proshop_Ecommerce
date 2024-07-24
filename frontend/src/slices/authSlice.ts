@@ -1,10 +1,31 @@
 import {createSlice} from "@reduxjs/toolkit";
 
+interface UserInfo {
+    _id: string;
+    name: string;
+    email: string;
 
-const initialState = {
-    userInfo : localStorage.getItem('userInfo') ?
-        JSON.parse(localStorage.getItem('userInfo')) : null ,
 }
+
+interface InitialState {
+    userInfo: UserInfo | null;
+}
+
+const getUserInfoFromStorage = (): UserInfo | null => {
+    const userInfoString = localStorage.getItem('userInfo');
+    if (!userInfoString) return null;
+
+    try {
+        return JSON.parse(userInfoString);
+    } catch (error) {
+        console.error('Error parsing userInfo from localStorage:', error);
+        return null;
+    }
+};
+
+const initialState: InitialState = {
+    userInfo: getUserInfoFromStorage(),
+};
 
 const authSlice = createSlice({
     name: 'auth',

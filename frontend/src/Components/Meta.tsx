@@ -1,6 +1,15 @@
 import {Helmet} from "react-helmet-async";
+import {FC} from "react";
 
-export const Meta = ({title,description, keywords}) => {
+interface MetaProps {
+    title?: string;
+    description?: string;
+    keywords?: string;
+}
+
+export const Meta:FC<MetaProps> = ({title='Welcome To ProShop',
+                                       description = 'We sell the best products for cheap',
+                                       keywords = 'electronics, buy electronics, cheap electronics'}) => {
     return (
         <Helmet>
             <title>{title}</title>
@@ -10,8 +19,3 @@ export const Meta = ({title,description, keywords}) => {
     );
 };
 
-Meta.defaultProps = {
-    title: 'Welcome To ProShop',
-    description: 'We sell the best products for cheap',
-    keywords: 'electronics, buy electronics, cheap electronics'
-}

@@ -1,11 +1,11 @@
 import {useSelector} from "react-redux";
 import {Navigate, Outlet} from "react-router-dom";
+import {RootState} from "./Header.tsx";
 
 
 export const PrivateRoute = () => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error
-    const {userInfo} = useSelector((state) => state.auth);
+
+    const {userInfo} = useSelector((state:RootState) => state.auth);
 
     return userInfo ? <Outlet/> : <Navigate to={'/login'} replace={true}/>
 };

@@ -6,3 +6,13 @@
     bottom: 0;
     background: rgba(0,0,0,0.5);
 }
+
+.product-carousel-container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.product-carousel-container .carousel-item img {
+    max-height: 600px;
+    object-fit: cover;
+}

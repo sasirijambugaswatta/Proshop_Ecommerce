@@ -1,6 +1,7 @@
 /* eslint-disable */
 import {createSlice} from "@reduxjs/toolkit";
 import {updateCart} from "../utils/cartUtils.ts";
+import {ProductType} from "../Components/Product.tsx";
 
 
 const initialState = localStorage.getItem("cart") ?
@@ -13,7 +14,7 @@ const cartSlice = createSlice({
         addToCart : (state,action)=>{
             const item = action.payload;
 
-            const existItem = state.cartItems.find((x)=>x._id === item._id);
+            const existItem = state.cartItems.find((x:ProductType)=>x._id === item._id);
 
             if(existItem){
 
@@ -29,7 +30,7 @@ const cartSlice = createSlice({
         removeFromCart : (state, action)=>{
             const removingItemId = action.payload;
 
-            state.cartItems = state.cartItems.filter((x) => x?._id !== removingItemId);
+            state.cartItems = state.cartItems.filter((x:ProductType) => x?._id !== removingItemId);
             return updateCart(state);
         },
         saveShippingAddress : (state, action )=>{

@@ -6,14 +6,22 @@ import {Rating} from "../Components/Rating.tsx";
 // import axios from "axios";
 import {LoaderScreen} from "./LoaderScreen.tsx";
 import {useGetSingleProductQuery} from "../slices/getSingleProductDetailsApiSlice.ts";
-import {useState} from "react";
+import {FormEvent, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {addToCart} from "../slices/cartSlice.ts";
 import {useCreateReviewMutation} from "../slices/productApiSlice.ts";
 import {Message} from "../Components/Message.tsx";
 import {toast} from "react-toastify";
 import {Meta} from "../Components/Meta.tsx";
+import {RootState} from "../Components/Header.tsx";
 
+interface Review {
+    _id: string;
+    name: string;
+    rating: number;
+    createdAt: string;
+    comment: string;
+}
 
 
 export const ProductScreen = () => {
@@ -43,7 +51,7 @@ export const ProductScreen = () => {
 
      const [createReview, {isLoading: isReviewLoading}] = useCreateReviewMutation();
 
-     const {userInfo} = useSelector((state) => state.auth);
+     const {userInfo} = useSelector((state:RootState) => state.auth);
 
     function addToCartHandler() {
         dispatch(addToCart({...product, qty}));
@@ -51,7 +59,7 @@ export const ProductScreen = () => {
     }
 
 
-    async function submitHandler(e) {
+    async function submitHandler(e:FormEvent) {
         e.preventDefault();
         try{
             console.log({productId, rating, comment});
@@ -65,7 +73,11 @@ export const ProductScreen = () => {
                 setComment('');
             }
         }catch (err){
-            toast.error(err?.data?.message || err?.error);
+            if (err instanceof Error) {
+                toast.error(err.message);
+            } else {
+                toast.error('An unknown error occurred');
+            }
         }
     }
 
@@ -164,7 +176,7 @@ export const ProductScreen = () => {
                             <h2>Reviews</h2>
                             {product.reviews.length === 0 && <Message>No Reviews</Message>}
                             <ListGroup variant={'flush'}>
-                                {product.reviews.map((review) => (
+                                {product.reviews.map((review:Review) => (
                                     <ListGroupItem key={review._id}>
                                         <strong>{review.name}</strong>
                                         <Rating value={review.rating} text={''}/>

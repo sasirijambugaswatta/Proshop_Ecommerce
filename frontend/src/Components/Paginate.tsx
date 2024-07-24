@@ -1,7 +1,15 @@
 import {Pagination} from "react-bootstrap";
 import {LinkContainer} from "react-router-bootstrap";
+import {FC} from "react";
 
-export const Paginate = ({pages, page, isAdmin = false,keyword = ''}) => {
+interface Props {
+    pages: number
+    page: number
+    isAdmin?: boolean
+    keyword?: string
+}
+
+export const Paginate:FC<Props> = ({pages, page, isAdmin = false,keyword = ''}) => {
 
     return (
         (pages as number)  > 1 && (

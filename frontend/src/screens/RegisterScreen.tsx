@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {FormEvent, useEffect, useState} from "react";
 import {FormContainer} from "../Components/FormContainer.tsx";
 import {Button, Col, Form, FormGroup, FormLabel, Row} from "react-bootstrap";
 import {Link, useLocation, useNavigate} from "react-router-dom";
@@ -7,6 +7,7 @@ import {setCredentials} from "../slices/authSlice.ts";
 import {toast} from "react-toastify";
 import {LoaderScreen} from "./LoaderScreen.tsx";
 import {useRegisterMutation} from "../slices/usersApiSlice.ts";
+import {RootState} from "../Components/Header.tsx";
 
 export const RegisterScreen = () => {
     const [name, setName] = useState('');
@@ -18,7 +19,7 @@ export const RegisterScreen = () => {
     const navigate = useNavigate();
 
     const [registerApiCall , {isLoading}] = useRegisterMutation();
-    const {userInfo} = useSelector((state) => state.auth);
+    const {userInfo} = useSelector((state:RootState) => state.auth);
 
     const {search} = useLocation();
 
@@ -31,7 +32,7 @@ export const RegisterScreen = () => {
         }
     }, [userInfo, redirect, navigate]);
 
-    const submitHandler = async (e) => {
+    const submitHandler = async (e:FormEvent) => {
         e.preventDefault();
        if(password !== confirmPassword){
            toast.error('Passwords do not match');
@@ -42,7 +43,11 @@ export const RegisterScreen = () => {
                dispatch(setCredentials({...res}));
                navigate(redirect);
            }catch (err){
-               toast.error(err?.data?.message || err.error);
+               if (err instanceof Error) {
+                   toast.error(err.message);
+               } else {
+                   toast.error('An unknown error occurred');
+               }
            }
        }
 

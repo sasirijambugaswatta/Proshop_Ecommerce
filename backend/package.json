@@ -8,7 +8,8 @@
     "compile": "tsc --watch",
     "start": "nodemon --enable-source-maps dist/src/main.js",
     "data:import": "node src/seeder.js",
-    "data-destroy": "node src/seeder -d"
+    "data-destroy": "node src/seeder -d",
+    "build": "pnpm install && cd .. && pnpm install --prefix frontend && npm run build --prefix frontend && cd backend"
   },
   "keywords": [],
   "author": "",

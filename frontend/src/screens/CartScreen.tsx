@@ -4,21 +4,30 @@ import {Button, Card, Col, FormControl, Image, ListGroup, ListGroupItem, Row} fr
 import {Message} from "../Components/Message.tsx";
 import {FaTrash} from "react-icons/fa";
 import {addToCart, removeFromCart} from "../slices/cartSlice.ts";
+import {RootState} from "../Components/Header.tsx";
+import {FC} from "react";
 
+export interface CartItem {
+    _id: string;
+    name: string;
+    image: string;
+    price: number;
+    countInStock: number;
+    qty: number;
+}
 
-
-export const CartScreen = () => {
+export const CartScreen:FC = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
-    const cart = useSelector((state) => state.cart);
+    const cart = useSelector((state:RootState) => state.cart);
     const {cartItems} = cart;
 
-    const addToCartHandler = async (product , qty) =>{
+    const addToCartHandler = async (product:CartItem , qty:number) =>{
         dispatch(addToCart({...product,qty}));
     }
 
-    async function removeFromCartHandler(id) {
+    async function removeFromCartHandler(id:string|undefined) {
         dispatch(removeFromCart(id));
     }
 
@@ -37,7 +46,7 @@ export const CartScreen = () => {
                     </Message>
                 ) : (
                     <ListGroup variant='flush'>
-                        {cartItems.map((item) => (
+                        {(cartItems as CartItem[]).map((item) => (
                             <ListGroupItem key={item._id}>
                                 <Row>
                                     <Col md={2}>
@@ -82,12 +91,12 @@ export const CartScreen = () => {
                     <ListGroup variant='flush'>
                         <ListGroup.Item>
                             <h2>
-                                Subtotal ({cartItems.reduce((acc, item) => acc + item.qty, 0)})
+                                Subtotal ({cartItems.reduce((acc, item) => acc + item.qty!, 0)})
                                 items
                             </h2>
                             $
                             {cartItems
-                                .reduce((acc, item) => acc + item.qty * item.price, 0)
+                                .reduce((acc, item) => acc + item.qty! * item.price!, 0)
                                 .toFixed(2)}
                         </ListGroup.Item>
                         <ListGroup.Item>

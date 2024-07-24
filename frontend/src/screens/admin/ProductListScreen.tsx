@@ -7,6 +7,9 @@ import {FaEdit, FaTrash} from "react-icons/fa";
 import {toast} from "react-toastify";
 import {useParams} from "react-router-dom";
 import {Paginate} from "../../Components/Paginate.tsx";
+import {ProductType} from "../../Components/Product.tsx";
+import {getErrorMessage} from "../../utils/errUtil.ts";
+
 
 export const ProductListScreen = () => {
     const {pageNumber} = useParams();
@@ -21,7 +24,11 @@ export const ProductListScreen = () => {
                 toast.success('Product deleted');
                 refetch();
             }catch (err ){
-                toast.error(err?.data?.message || err?.error)
+                if (err instanceof Error) {
+                    toast.error(err.message);
+                } else {
+                    toast.error('An unknown error occurred');
+                }
             }
         }
     }
@@ -32,10 +39,15 @@ export const ProductListScreen = () => {
                  await createProduct({});
                  refetch();
             }catch (err ){
-                toast.error(err?.data?.message || err?.error)
+                if (err instanceof Error) {
+                    toast.error(err.message);
+                } else {
+                    toast.error('An unknown error occurred');
+                }
             }
         }
     }
+
 
     return (
         <>
@@ -52,7 +64,7 @@ export const ProductListScreen = () => {
             {isLoadingDelete && <LoaderScreen/>}
 
             {isLoading ? (<LoaderScreen/>) : error ? (
-                <Message variant={'danger'}>{error?.data?.message || error?.error}</Message>) : (
+                <Message variant={'danger'}>{getErrorMessage(error)}</Message>) : (
                 <>
                     <table className={'table table-striped table-bordered'}>
                         <thead>
@@ -66,7 +78,7 @@ export const ProductListScreen = () => {
                         </tr>
                         </thead>
                         <tbody>
-                        {data.products?.map(product => (
+                        {data.products?.map((product:ProductType) => (
                             <tr key={product._id}>
                                 <td>{product._id}</td>
                                 <td>{product.name}</td>
