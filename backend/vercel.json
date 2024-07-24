@@ -4,13 +4,17 @@
     {
       "src": "backend/package.json",
       "use": "@vercel/node",
-      "config": { "includeFiles": ["dist/**"] }
+      "config": {
+        "includeFiles": ["dist/**"],
+        "buildCommand": "cd backend && pnpm install && pnpm run build"
+      }
     },
     {
       "src": "frontend/package.json",
       "use": "@vercel/static-build",
       "config": {
-        "distDir": "dist"
+        "distDir": "dist",
+        "buildCommand": "cd frontend && pnpm install && pnpm run build"
       }
     }
   ],
