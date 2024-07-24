@@ -5,16 +5,14 @@
       "src": "backend/package.json",
       "use": "@vercel/node",
       "config": {
-        "includeFiles": ["dist/**"],
-        "buildCommand": "cd backend && pnpm install && pnpm run build"
+        "includeFiles": ["dist/**"]
       }
     },
     {
       "src": "frontend/package.json",
-      "use": "@vercel/static-build",
+      "use": "@vercel/vite",
       "config": {
-        "distDir": "dist",
-        "buildCommand": "cd frontend && pnpm install && pnpm run build"
+        "root": "frontend"
       }
     }
   ],
@@ -25,7 +23,8 @@
     },
     {
       "src": "/(.*)",
-      "dest": "frontend/dist/$1"
+      "dest": "frontend/$1"
     }
-  ]
+  ],
+  "buildCommand": "cd backend && pnpm install && pnpm run build && cd ../frontend && pnpm install && pnpm run build"
 }
