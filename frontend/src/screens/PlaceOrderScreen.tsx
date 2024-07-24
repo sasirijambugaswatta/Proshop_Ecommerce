@@ -1,5 +1,5 @@
 import {Link, useNavigate} from "react-router-dom";
-import { useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {useEffect} from "react";
 import {CheckoutSteps} from "../Components/CheckoutSteps.tsx";
 import {Button, Card, Col, Image, ListGroup, ListGroupItem, Row} from "react-bootstrap";
@@ -7,6 +7,7 @@ import {Message} from "../Components/Message.tsx";
 import {useCreateOrderMutation} from "../slices/ordersApiSlice.ts";
 import {LoaderScreen} from "./LoaderScreen.tsx";
 import {toast} from "react-toastify";
+import {clearCartItems} from "../slices/cartSlice.ts";
 
 interface RootState {
     cart: {
@@ -39,7 +40,7 @@ type PaymentMethod = string;
 
 export const PlaceOrderScreen = () => {
     const navigate = useNavigate();
-    // const dispatch = useDispatch();
+    const dispatch = useDispatch();
     const cart = useSelector((state: RootState) => state.cart);
 
     const [createOrder, {isLoading, isError}] = useCreateOrderMutation();
@@ -56,7 +57,7 @@ export const PlaceOrderScreen = () => {
                 totalPrice: cart.totalPrice
             }).unwrap();
             console.log('res ',res.orderItems);
-            // dispatch(clearCartItems());
+            dispatch(clearCartItems());
             navigate(`/order/${res._id}`);
         } catch (err) {
             if (err instanceof Error) {

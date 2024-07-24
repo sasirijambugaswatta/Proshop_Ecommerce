@@ -21,6 +21,7 @@ export const CartScreen:FC = () => {
     const dispatch = useDispatch();
 
     const cart = useSelector((state:RootState) => state.cart);
+    const userInfo = useSelector((state:RootState) => state.auth);
     const {cartItems} = cart;
 
     const addToCartHandler = async (product:CartItem , qty:number) =>{
@@ -32,7 +33,11 @@ export const CartScreen:FC = () => {
     }
 
     function checkoutHandler() {
-        navigate('/login?redirect=shipping');
+        if (userInfo) {
+            navigate('/shipping');
+        } else {
+            navigate('/login?redirect=/shipping');
+        }
     }
 
     return (

@@ -67,11 +67,6 @@ export const OrderScreen = () => {
         }
     }, [order, paypal, paypalDispatch, isPaypalClientLoading, paypalClientError]);
 
-    // async function onApproveTest() {
-    //     await payOrder({orderId, details: {}});
-    //     refetch();
-    //     toast.success('Payment successful');
-    // }
 
     function createOrder(_data:CreateOrderData, actions:CreateOrderActions) {
         return actions.order.create({

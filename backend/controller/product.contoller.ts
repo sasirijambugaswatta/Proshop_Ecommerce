@@ -4,7 +4,7 @@ import Product from "../models/product.model.js";
 
 
 const getProducts = asyncHandler(async (req:Request, res:Response) => {
-    const pageSize = 2;
+    const pageSize =Number.parseInt(process.env.PAGINATION_LIMIT!.toString() || '10');
     const page = Number(req.query.pageNumber) || 1;
 
     const keyword = req.query.keyword

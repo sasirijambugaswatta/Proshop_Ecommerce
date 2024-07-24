@@ -16,6 +16,7 @@ import {useNavigate} from "react-router-dom";
 import {useLogoutMutation} from "../slices/usersApiSlice.ts";
 import {logout} from "../slices/authSlice.ts";
 import {SearchBox} from "./SearchBox.tsx";
+import logo from "../assets/logo.png"
 
 export interface RootState {
     cart: {
@@ -73,7 +74,7 @@ export const Header = () => {
                 <Container>
                     <LinkContainer to={'/'}>
                         <NavbarBrand>
-                            <img className={"w-25 h-25"} src="/src/assets/logo.png" alt="ProShop Logo"/>
+                            <img className={"w-25 h-25"} src={logo} alt="ProShop Logo"/>
                             ProShop</NavbarBrand>
                     </LinkContainer>
                     <NavbarToggle aria-controls={"basic-navbar-nav"}/>
